@@ -10,6 +10,8 @@ import { login } from "../actions/auth";
 import { PrivateRoute } from "./PrivateRoute";
 import { PublicRoute } from "./PublicRoute";
 
+import { startLoadingNotes } from "../actions/notes";
+
 
 
 export const AppRouter = () => {
@@ -19,10 +21,11 @@ export const AppRouter = () => {
     const [ isLogged, setIsLogged ] = useState(false);
 
     useEffect( () => {
-        firebase.auth().onAuthStateChanged( ( (user)  => {
+        firebase.auth().onAuthStateChanged( ( async (user)  => {
             if (user?.multiFactor.user.uid) {
                 dispatch( login(user.multiFactor.user.uid, user.multiFactor.user.displayName) );
                 setIsLogged(true);
+                dispatch(startLoadingNotes(user.multiFactor.user.uid));
             } else {
                 setIsLogged(false);
             }
